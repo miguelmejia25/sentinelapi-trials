@@ -8,7 +8,7 @@ from typing import List, Optional, Dict
 import time
 
 import config
-import compression
+import compression_img
 
 
 def export_to_drive(
@@ -217,7 +217,7 @@ def export_multiple_products(
     
     if "rgb" in products:
         # True color RGB
-        rgb = compression.prepare_rgb_visualization(
+        rgb = compression_img.prepare_rgb_visualization(
             composite, 
             config.VIS_BANDS_RGB
         )
@@ -230,7 +230,7 @@ def export_multiple_products(
     
     if "agriculture" in products:
         # False color for agriculture
-        agri = compression.prepare_rgb_visualization(
+        agri = compression_img.prepare_rgb_visualization(
             composite,
             config.VIS_BANDS_AGRICULTURE,
             max_val=5000
@@ -244,7 +244,7 @@ def export_multiple_products(
     
     if "soil_vis" in products:
         # SWIR composite for soil/geology
-        soil_vis = compression.prepare_rgb_visualization(
+        soil_vis = compression_img.prepare_rgb_visualization(
             composite,
             config.VIS_BANDS_SOIL,
             max_val=5000

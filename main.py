@@ -34,7 +34,7 @@ from soil import (
     print_soil_analysis,
     create_bare_soil_mask
 )
-from compression import estimate_file_size, print_export_summary
+from compression_img import estimate_file_size, print_export_summary
 from export import (
     export_to_drive,
     export_multiple_products,
