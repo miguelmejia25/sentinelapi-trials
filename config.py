@@ -70,7 +70,7 @@ COMPOSITE_PERCENTILE = 50
 # - NDMI: Normalized Difference Moisture Index
 # - BSI: Bare Soil Index (alternative formula)
 
-SOIL_INDICES = ["NDSI", "BI", "CI", "NDMI", "BSI"]
+SOIL_INDICES = ["NDVI","NDSI", "BI", "CI", "NDMI", "BSI"]
 
 # =============================================================================
 # EXPORT SETTINGS
@@ -80,7 +80,7 @@ SOIL_INDICES = ["NDSI", "BI", "CI", "NDMI", "BSI"]
 EXPORT_DESTINATION = "drive"
 
 # Google Drive folder name (created if doesn't exist)
-DRIVE_FOLDER = "plantation_prueba"
+DRIVE_FOLDER = "prueba_histograms"
 
 # Export file prefix
 FILE_PREFIX = "manabi_coastal"

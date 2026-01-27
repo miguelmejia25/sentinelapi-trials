@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Analysis - -1.841927, -80.741419</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #00d4ff;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0f3460;
+        }
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto 40px auto;
+        }
+        .image-container {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .image-container h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .chart-container {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .chart-container canvas {
+            max-height: 300px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .stats span {
+            background: #0f3460;
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        .legend {
+            max-width: 1800px;
+            margin: 40px auto;
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .legend h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .legend-item {
+            background: #0f3460;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .legend-item strong {
+            color: #00d4ff;
+        }
+        .legend-item p {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Soil Analysis - -1.841927, -80.741419</h1>
+    <p class="subtitle">Satellite imagery and soil quality index analysis</p>
+    
+    
+        <h2 class="section-title">🛰️ Satellite Imagery</h2>
+        <div class="images-grid">
+        
+            <div class="image-container">
+                <h3>True Color (RGB)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/e27575fc74aeebf456cc92b3c728be2d-50651ffbc6e4101ceb7f485dca3e6966:getPixels" alt="True Color (RGB)" />
+            </div>
+            
+            <div class="image-container">
+                <h3>False Color (Agriculture)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/7548d78f482cb155cadd357dfc07a44b-81d660d09e4f3ac7adac85f71394deb7:getPixels" alt="False Color (Agriculture)" />
+            </div>
+            
+            <div class="image-container">
+                <h3>SWIR (Soil/Geology)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/ea784ca311f6ef2eb153a273511d6ae8-c51dbfdae68473274f6c7a7db8a1103c:getPixels" alt="SWIR (Soil/Geology)" />
+            </div>
+            
+            <div class="image-container">
+                <h3>NDVI (Vegetation Health)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/e12c390908b631550533d46e331757e4-554f199f82d6fa5e9a35c237976d558c:getPixels" alt="NDVI (Vegetation Health)" />
+            </div>
+            
+            <div class="image-container">
+                <h3>NDMI (Moisture)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/da93d51be7f790cc5e6489781c261b18-2970c477493c7e43c9c3b539fcbb3a46:getPixels" alt="NDMI (Moisture)" />
+            </div>
+            
+            <div class="image-container">
+                <h3>BSI (Bare Soil Index)</h3>
+                <img src="https://earthengine.googleapis.com/v1/projects/enginetrial/thumbnails/2121d5a30909c984c445217cd93baf4e-fdd6f79b7292c1779801a737b6309a8c:getPixels" alt="BSI (Bare Soil Index)" />
+            </div>
+            </div>
+    
+    <h2 class="section-title">📈 Index Histograms</h2>
+    <div class="charts-grid">
+        
+        <div class="chart-container">
+            <canvas id="chart_NDVI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.25490196078</span>
+                <span>Mean: 0.3412</span>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart_NDSI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.25490196078</span>
+                <span>Mean: -0.0828</span>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart_BI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.2549019608</span>
+                <span>Mean: -0.1057</span>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart_CI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.25490196078</span>
+                <span>Mean: -0.1269</span>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart_NDMI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.2549019608</span>
+                <span>Mean: 0.0828</span>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="chart_BSI"></canvas>
+            <div class="stats">
+                <span>Pixels: 82,268.2549019608</span>
+                <span>Mean: 77.2799</span>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="legend">
+        <h3>📖 Index Interpretation Guide</h3>
+        <div class="legend-grid">
+            <div class="legend-item">
+                <strong>NDVI</strong> (Vegetation)
+                <p>-1 to 0: Bare/water | 0-0.3: Sparse | 0.3-0.6: Moderate | 0.6-1: Dense healthy</p>
+            </div>
+            <div class="legend-item">
+                <strong>NDSI</strong> (Soil)
+                <p>Negative: Vegetation | Near 0: Mixed | Positive: Bare soil</p>
+            </div>
+            <div class="legend-item">
+                <strong>NDMI</strong> (Moisture)
+                <p>&lt;0: Dry stress | 0-0.2: Moderate | &gt;0.2: Good moisture</p>
+            </div>
+            <div class="legend-item">
+                <strong>BI</strong> (Bare Index)
+                <p>Negative: Vegetated | Positive: Exposed soil</p>
+            </div>
+            <div class="legend-item">
+                <strong>BSI</strong> (Bare Soil Index)
+                <p>&lt;80: Dense veg | 80-100: Sparse | &gt;100: Bare soil</p>
+            </div>
+            <div class="legend-item">
+                <strong>CI</strong> (Color Index)
+                <p>Negative: Dark/organic soil | Positive: Red/iron-rich soil</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        
+        new Chart(document.getElementById('chart_NDVI'), {
+            type: 'bar',
+            data: {
+                labels: ["-0.413", "-0.378", "-0.333", "-0.297", "-0.258", "-0.219", "-0.179", "-0.135", "-0.093", "-0.060", "-0.025", "0.018", "0.059", "0.099", "0.139", "0.180", "0.220", "0.260", "0.300", "0.341", "0.381", "0.421", "0.461", "0.501", "0.540", "0.581", "0.620", "0.660", "0.701", "0.740", "0.779", "0.815", "0.849", "0.887"],
+                datasets: [{
+                    label: 'NDVI',
+                    data: [4, 4, 16, 37, 86, 155, 258.83921568627454, 704.9607843137256, 4682.721568627452, 14509.882352941171, 7050.388235294117, 2672.443137254902, 1507.8941176470587, 1202.1607843137253, 944.1450980392158, 652.6039215686275, 674.3803921568627, 687.9215686274509, 861.7529411764706, 1194.4549019607844, 1565.7098039215684, 2178.870588235293, 2690.345098039216, 2975.160784313725, 3371.0862745098034, 3665.1137254901964, 4033.0666666666666, 4549.368627450979, 5082.305882352942, 5620.803921568627, 5500.239215686273, 2893.9254901960794, 228.70980392156864, 7],
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'NDVI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('chart_NDSI'), {
+            type: 'bar',
+            data: {
+                labels: ["-0.574", "-0.538", "-0.497", "-0.459", "-0.422", "-0.378", "-0.336", "-0.294", "-0.257", "-0.218", "-0.179", "-0.140", "-0.098", "-0.061", "-0.022", "0.019", "0.059", "0.099", "0.138", "0.177", "0.218", "0.258", "0.298", "0.336", "0.382", "0.414", "0.457", "0.490"],
+                datasets: [{
+                    label: 'NDSI',
+                    data: [4, 13, 29.635294117647057, 45, 54, 100, 164.30588235294118, 691.0509803921569, 2642.050980392159, 5328.317647058821, 8585.101960784314, 10777.992156862741, 15143.282352941178, 15678.756862745096, 8525.92156862746, 5187.729411764706, 3828.737254901961, 2622.7607843137253, 1551.3764705882352, 691.2352941176472, 301, 157, 80, 36, 17, 9, 3, 1],
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'NDSI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('chart_BI'), {
+            type: 'bar',
+            data: {
+                labels: ["-0.534", "-0.500", "-0.455", "-0.417", "-0.379", "-0.336", "-0.294", "-0.259", "-0.217", "-0.180", "-0.141", "-0.101", "-0.061", "-0.021", "0.019", "0.059", "0.099", "0.138", "0.176", "0.216", "0.256", "0.282"],
+                datasets: [{
+                    label: 'BI',
+                    data: [3, 7, 17, 39, 84.14509803921568, 303.89019607843136, 1472.2078431372547, 4035.568627450981, 8017.647058823525, 14181.737254901973, 15292.807843137258, 10240.827450980392, 7960.32549019608, 6165.282352941176, 4869.972549019607, 3922.58431372549, 2907.6117647058827, 1943.862745098039, 647.1921568627453, 138.5921568627451, 17, 1],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'BI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('chart_CI'), {
+            type: 'bar',
+            data: {
+                labels: ["-0.457", "-0.411", "-0.371", "-0.335", "-0.295", "-0.258", "-0.219", "-0.179", "-0.139", "-0.102", "-0.061", "-0.021", "0.019", "0.056", "0.095", "0.135", "0.176", "0.219", "0.251", "0.286", "0.356"],
+                datasets: [{
+                    label: 'CI',
+                    data: [1, 8, 91, 632.2156862745098, 2319.5882352941185, 6028.054901960785, 8836.611764705882, 11735.603921568625, 14784.905882352945, 14593.30196078431, 8700.63137254902, 6510.4784313725495, 4719.650980392157, 2560.4627450980392, 604.4588235294119, 97.95686274509804, 24, 13, 4, 3, 0.3333333333333333],
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'CI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('chart_NDMI'), {
+            type: 'bar',
+            data: {
+                labels: ["-0.490", "-0.457", "-0.414", "-0.382", "-0.336", "-0.298", "-0.258", "-0.218", "-0.177", "-0.138", "-0.099", "-0.059", "-0.019", "0.022", "0.061", "0.098", "0.140", "0.179", "0.218", "0.257", "0.294", "0.336", "0.378", "0.422", "0.459", "0.497", "0.538", "0.574"],
+                datasets: [{
+                    label: 'NDMI',
+                    data: [1, 3, 9, 17, 36, 80, 157, 299, 692.2627450980393, 1551.349019607843, 2622.7607843137253, 3826.737254901961, 5125.729411764706, 8575.92156862746, 15676.756862745096, 15145.282352941178, 10790.992156862743, 8572.101960784314, 5342.317647058821, 2643.050980392159, 691.0509803921569, 164.30588235294118, 100, 54, 45, 29.635294117647057, 13, 4],
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'NDMI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('chart_BSI'), {
+            type: 'bar',
+            data: {
+                labels: ["34.071", "37.862", "42.456", "46.705", "50.479", "54.150", "58.067", "62.051", "66.017", "70.068", "74.087", "78.128", "81.775", "85.856", "89.930", "93.880", "97.824", "101.871", "105.925", "109.814", "113.611", "117.469", "121.352", "125.832", "131.872"],
+                datasets: [{
+                    label: 'BSI',
+                    data: [2, 5, 30.266666666666666, 171.40392156862748, 1282.6431372549018, 2922.5333333333347, 4045.219607843139, 5099.839215686276, 5578.576470588237, 7574.16862745098, 7765.443137254904, 14472.447058823524, 12394.529411764714, 6409.266666666668, 4555.894117647059, 3441.270588235294, 2382.6392156862744, 1668.1999999999998, 1177.3058823529411, 740.607843137255, 396, 124, 26, 2, 1],
+                    backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'BSI Distribution',
+                        font: { size: 16 }
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Value' },
+                        ticks: { maxTicksLimit: 10 }
+                    },
+                    y: {
+                        title: { display: true, text: 'Pixel Count' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+    </script>
+</body>
+</html>

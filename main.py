@@ -9,7 +9,7 @@ Usage:
     python main.py --export           # Run pipeline and export results
     python main.py --stats            # Calculate and display soil statistics
 
-Author: Miguel
+Author: Plantation Soil Analysis System
 Location: Coastal Ecuador (Manabí Province)
 """
 
@@ -40,6 +40,14 @@ from export import (
     export_multiple_products,
     wait_for_all_tasks,
     list_running_tasks
+)
+from visualization import (
+    get_all_indices_histograms,
+    print_all_histograms,
+    save_histogram_html,
+    save_histogram_csv,
+    save_histogram_json,
+    get_all_visualization_urls
 )
 
 
@@ -84,7 +92,7 @@ def run_info_mode(roi):
         print("\n  ✓ Sufficient imagery for analysis")
 
 
-def run_pipeline(roi, calculate_stats=True, do_export=False, wait_for_export=False):
+def run_pipeline(roi, calculate_stats=True, do_export=False, wait_for_export=False, generate_histograms=False):
     """
     Run the full processing pipeline.
     
@@ -93,6 +101,7 @@ def run_pipeline(roi, calculate_stats=True, do_export=False, wait_for_export=Fal
         calculate_stats: Whether to calculate soil statistics.
         do_export: Whether to export results to Drive.
         wait_for_export: Whether to wait for exports to complete.
+        generate_histograms: Whether to generate histogram visualizations.
     
     Returns:
         dict: Results including composite, indices, and statistics.
@@ -168,6 +177,38 @@ def run_pipeline(roi, calculate_stats=True, do_export=False, wait_for_export=Fal
         # Print analysis report
         print_soil_analysis(stats, f"Coastal Ecuador ({config.LATITUDE}, {config.LONGITUDE})")
     
+    # Generate histograms if requested
+    if generate_histograms:
+        print("\n[HISTOGRAMS] Generating index histograms...")
+        print("-" * 40)
+        
+        histograms = get_all_indices_histograms(
+            composite_with_indices,
+            roi,
+            indices=config.SOIL_INDICES
+        )
+        results["histograms"] = histograms
+        
+        # Print ASCII histograms to console
+        print_all_histograms(histograms)
+        
+        # Generate thumbnail images
+        print("\n[IMAGES] Generating visualization thumbnails...")
+        print("-" * 40)
+        
+        image_urls = get_all_visualization_urls(composite, roi, dimensions=600)
+        results["image_urls"] = image_urls
+        
+        # Save as HTML with images, CSV, and JSON
+        save_histogram_html(
+            histograms, 
+            "histograms.html", 
+            f"Soil Analysis - {config.LATITUDE}, {config.LONGITUDE}",
+            images=image_urls
+        )
+        save_histogram_csv(histograms, "histograms.csv")
+        save_histogram_json(histograms, "histograms.json")
+    
     # Export if requested
     if do_export:
         print("\n[EXPORT] Exporting results to Google Drive...")
@@ -229,6 +270,11 @@ def main():
         help="Skip statistics calculation"
     )
     parser.add_argument(
+        "--histograms",
+        action="store_true",
+        help="Generate histogram visualizations"
+    )
+    parser.add_argument(
         "--lat",
         type=float,
         help="Override latitude"
@@ -272,7 +318,8 @@ def main():
             roi,
             calculate_stats=not args.no_stats,
             do_export=args.export,
-            wait_for_export=args.wait
+            wait_for_export=args.wait,
+            generate_histograms=args.histograms
         )
         
         if results is None:
@@ -285,6 +332,9 @@ def main():
         
         if "statistics" in results:
             print(f"  - Statistics computed: Yes")
+        
+        if "histograms" in results:
+            print(f"  - Histograms generated: Yes (histograms.html, .csv, .json)")
         
         if "export_tasks" in results:
             print(f"  - Exports started: {len(results['export_tasks'])}")
