@@ -15,15 +15,17 @@ def analyze_fun(
     latitude: float = None,
     longitude: float = None,
     buffer_m: int = None,
-    cloud_max: int = None
+    cloud_max: int = None,
+    start_date: str = None, 
+    end_date: str = None
 ):
     
     results = {}
     
-    lat = latitude or config.LATITUDE
-    lon = longitude or config.LONGITUDE
-    buffer = buffer_m or config.BUFFER_RADIUS_M
-    cloud_thresh = cloud_max  or config.CLOUD_PROBABILITY_THRESHOLD
+    lat = latitude 
+    lon = longitude 
+    buffer = buffer_m 
+    cloud_thresh = cloud_max or config.CLOUD_PROBABILITY_THRESHOLD
     try:
         point = ee.Geometry.Point([lon, lat])
         roi = point.buffer(buffer)
@@ -31,7 +33,7 @@ def analyze_fun(
         raise AnalysisError("Error creando roi: "+ e)
 
     try:
-        s2_collection, s2_count = get_sentinel2_collection(roi)
+        s2_collection, s2_count = get_sentinel2_collection(roi, start_date, end_date)
         if s2_count == 0:
             raise AnalysisError("Error obteniendo coleccion de imagenes s2, intenta cambiando el rango de tiempo")
 
@@ -111,8 +113,8 @@ def analyze_fun(
             },
             "buffer_m": buffer_m,
             "date_range": {
-                "start": config.START_DATE,
-                "end": config.END_DATE
+                "start": start_date,
+                "end": end_date
             },
             "images_used": s2_count,
             "cloud_threshold": cloud_thresh

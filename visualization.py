@@ -69,7 +69,7 @@ def get_all_visualization_urls(
         visualizations["True Color (RGB)"] = get_thumbnail_url(
             composite, roi,
             bands=["B4", "B3", "B2"],
-            min_val=0, max_val=3000,
+            min_val=7000, max_val=12000,
             dimensions=dimensions
         )
         print("  ✓ Generated True Color thumbnail")
@@ -81,7 +81,7 @@ def get_all_visualization_urls(
         visualizations["False Color (Agriculture)"] = get_thumbnail_url(
             composite, roi,
             bands=["B8", "B4", "B3"],
-            min_val=0, max_val=4000,
+            min_val=7000, max_val=15000,
             dimensions=dimensions
         )
         print("  ✓ Generated False Color thumbnail")
@@ -93,7 +93,7 @@ def get_all_visualization_urls(
         visualizations["SWIR (Soil/Geology)"] = get_thumbnail_url(
             composite, roi,
             bands=["B11", "B8", "B4"],
-            min_val=0, max_val=4000,
+            min_val=7000, max_val=15000,
             dimensions=dimensions
         )
         print("  ✓ Generated SWIR Soil thumbnail")

@@ -34,7 +34,7 @@ S2_CLOUDLESS = "COPERNICUS/S2_CLOUD_PROBABILITY"
 
 # Cloud probability threshold (0-100)
 # Pixels with cloud probability above this are masked
-CLOUD_PROBABILITY_THRESHOLD = 40
+CLOUD_PROBABILITY_THRESHOLD = 70
 
 # Maximum scene cloud percentage to include in collection
 MAX_SCENE_CLOUD_PERCENT = 70
