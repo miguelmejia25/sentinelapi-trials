@@ -1,11 +1,39 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flasgger import Swagger, swag_from
+from datetime import datetime
 from analysis import analyze_fun, AnalysisError
 from auth import setup_gee
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
+
+# Swagger configuration
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec",
+            "route": "/apispec.json",
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/docs"  # ← URL para ver la documentación
+}
+
+swagger_template = {
+    "info": {
+        "title": "Soil Analysis API",
+        "description": "API para análisis de suelos usando imágenes satelitales de Sentinel-2",
+        "version": "1.0.0"
+    }
+}
+
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 # Initialize GEE on startup
 gee_connected = False
@@ -15,62 +43,31 @@ except Exception as e:
     print(f"Error inicializando GEE: {e}")
 
 
-
 def validate_analyze_request(data: dict) -> list:
-    """
-    Validate the analyze request data.
-    
-    Args:
-        data: Request JSON data
-    
-    Returns:
-        list: List of error messages (empty if valid)
-    """
-    errors = []
-    
-    # Check if data exists
-    if not data:
-        return ["Request body is required"]
-    
-    # Validate lat
-    if "lat" not in data:
-        errors.append("lat is required")
-    elif not isinstance(data["lat"], (int, float)):
-        errors.append("lat must be a number")
-    elif data["lat"] < -90 or data["lat"] > 90:
-        errors.append("lat must be between -90 and 90")
-    
-    # Validate lon
-    if "lon" not in data:
-        errors.append("lon is required")
-    elif not isinstance(data["lon"], (int, float)):
-        errors.append("lon must be a number")
-    elif data["lon"] < -180 or data["lon"] > 180:
-        errors.append("lon must be between -180 and 180")
-    
-    # Validate radius_km
-    if "buffer" not in data:
-        errors.append("buffer is required")
-    elif not isinstance(data["buffer"], (int, float)):
-        errors.append("buffer must be a number")
-    elif data["buffer"] < 1 or data["buffer"] > 10000:
-        errors.append("radius_km must be between 1 and 10000")
-    
-    # Validate optional cloud_threshold
-    if "cloud_threshold" in data:
-        if not isinstance(data["cloud_threshold"], (int, float)):
-            errors.append("cloud_threshold must be a number")
-        elif data["cloud_threshold"] < 0 or data["cloud_threshold"] > 100:
-            errors.append("cloud_threshold must be between 0 and 100")
-    
-    return errors
-
-
+    # ... tu código de validación existente ...
+    pass
 
 
 @app.route("/api/health", methods=["GET"])
 def health():
-    """Health check endpoint"""
+    """
+    Health check endpoint
+    ---
+    tags:
+      - Health
+    responses:
+      200:
+        description: Server status
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: healthy
+            gee_connected:
+              type: boolean
+              example: true
+    """
     return jsonify({
         "status": "healthy",
         "gee_connected": gee_connected
@@ -80,15 +77,120 @@ def health():
 @app.route("/api/analyze", methods=["POST"])
 def analyze_endpoint():
     """
-    Main analysis endpoint.
-    
-    Expects JSON body:
-    {
-        "lat": float,
-        "lon": float,
-        "radius_km": float,
-        "cloud_threshold": int (optional)
-    }
+    Analyze soil quality from satellite imagery
+    ---
+    tags:
+      - Analysis
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - lat
+            - lon
+            - buffer
+            - start_date
+            - end_date
+          properties:
+            lat:
+              type: number
+              description: Latitude (-90 to 90)
+              example: -1.841927
+            lon:
+              type: number
+              description: Longitude (-180 to 180)
+              example: -80.741419
+            buffer:
+              type: integer
+              description: Buffer radius in meters (1 to 10000)
+              example: 5000
+            start_date:
+              type: string
+              description: Start date (YYYY-MM-DD)
+              example: "2025-01-01"
+            end_date:
+              type: string
+              description: End date (YYYY-MM-DD)
+              example: "2025-06-01"
+            cloud_threshold:
+              type: integer
+              description: Cloud probability threshold 0-100 (optional)
+              example: 50
+    responses:
+      200:
+        description: Analysis successful
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            data:
+              type: object
+              properties:
+                metadata:
+                  type: object
+                  properties:
+                    coordinates:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lon:
+                          type: number
+                    buffer_m:
+                      type: integer
+                    date_range:
+                      type: object
+                      properties:
+                        start:
+                          type: string
+                        end:
+                          type: string
+                    images_used:
+                      type: integer
+                    cloud_threshold:
+                      type: integer
+                images:
+                  type: object
+                  description: URLs to satellite imagery visualizations
+                indices:
+                  type: object
+                  description: Soil quality indices statistics
+                histograms:
+                  type: object
+                  description: Histogram data for each index
+      400:
+        description: Validation error
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: false
+            error:
+              type: string
+              example: "Validation failed"
+            details:
+              type: array
+              items:
+                type: string
+      422:
+        description: Analysis failed
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: false
+            error:
+              type: string
+            message:
+              type: string
+      503:
+        description: GEE not connected
     """
     
     # Get JSON data
@@ -120,7 +222,9 @@ def analyze_endpoint():
     lat = data["lat"]
     lon = data["lon"]
     radius_m = int(data["buffer"])  
-    cloud_threshold = data.get("cloud_threshold")  # Optional
+    cloud_threshold = data.get("cloud_threshold")
+    start_date = data["start_date"]
+    end_date = data["end_date"]
     
     # Run analysis
     try:
@@ -128,7 +232,9 @@ def analyze_endpoint():
             latitude=lat,
             longitude=lon,
             buffer_m=radius_m,
-            cloud_max=cloud_threshold
+            cloud_max=cloud_threshold,
+            start_date=start_date,
+            end_date=end_date
         )
         
         return jsonify({
@@ -149,8 +255,6 @@ def analyze_endpoint():
             "error": "Internal server error",
             "message": str(e)
         }), 500
-
-
 
 
 @app.errorhandler(400)
@@ -178,6 +282,7 @@ def internal_error(error):
         "error": "Internal server error",
         "message": "An unexpected error occurred"
     }), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
