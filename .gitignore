@@ -1,3 +1,6 @@
 .venv
 _pycache_/
 .vscode/
+.json
+.csv
+.html
